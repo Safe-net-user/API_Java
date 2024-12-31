@@ -16,11 +16,6 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-    @GetMapping("/")
-    public String test(){
-        return "It works";
-    }
-
     @GetMapping("/users")
     public List<User> getAll(){
         return userRepository.findAll();
@@ -28,6 +23,11 @@ public class UserController {
 
     @PostMapping("/users")
     public User createUser(@RequestBody User user){
+        String email = user.getEmail();
+        Optional<User> existingEmail = userRepository.findByEmail(email);
+        if(existingEmail.isPresent()){
+            throw new IllegalArgumentException("Email déja utilisé");
+        }
         return userRepository.save(user);
     }
 
